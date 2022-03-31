@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="9168bc44-c16c-4578-b8b7-a5822cc16eac" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="d0314ee4-ba5c-4614-b133-3323e84a1c17" >
+		<db:generic-connection url="jdbc:sqlite:C:\\Users\\abhis\Downloads\sqlite-tools-win32-x86-3370200\sqlite-tools-win32-x86-3370200" driverClassName="org.sqlite.JDBC" />
+	</db:config>
+	<flow name="session2Flow" doc:id="226e7414-6363-413d-aaab-705f5049e82a" >
+		<http:listener doc:name="Listener" doc:id="c4c0c033-b348-4ffb-a628-7f6330a94136" config-ref="HTTP_Listener_config" path="/test"/>
+		<logger level="INFO" doc:name="Logger" doc:id="6ed9f321-ab91-40fd-b2f4-829e9cbe9da0" message='#[now() ++ "before"]'/>
+		<parallel-foreach doc:name="Parallel For Each" doc:id="59154c1d-8384-4ea3-8b5b-ec1cd3e6fcba" collection="#[1 to 10]">
+			<ee:transform doc:name="Transform Message" doc:id="f42b417d-09db-41c0-be38-7f42ec0ee3be">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+
+---
+
+payload+1]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			<logger level="INFO" doc:name="Logger" doc:id="9ace8bec-3b1d-4cfe-abfa-322dd848c194" message='#[now() ++  "after"]'/>
+		</parallel-foreach>
+	</flow>
+</mule>
